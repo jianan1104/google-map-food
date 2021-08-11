@@ -154,7 +154,8 @@ let app = new Vue({
             const lat = this.location.lat
             const lng = this.location.lng
             const cors = 'https://cors-anywhere.herokuapp.com/'
-            this.apiUrl = `${cors}https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
+            //this.apiUrl = `${cors}https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
+            this.apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
             this.axios.get(this.apiUrl).then((response) => {
                 if(response.data.status === 'OK'){
                     console.log(response.data)
