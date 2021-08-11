@@ -23,6 +23,7 @@
         <!-- vue-star-rating.js-->
         <script src="https://unpkg.com/vue-star-rating/dist/VueStarRating.umd.min.js"></script>
 
+
 </script>
     </head>
     <body>
@@ -87,7 +88,7 @@
                           </div>
                     </div>
                 </div>
-                <nav aria-label="Page navigation example">
+                <nav aria-label="Page navigation" v-if="data">
                     <ul class="pagination">
                       <li class="page-item"><button class="btn btn-outline-primary mx-3" :class="{'disabled': pre_page}"  @click="previous">上一頁</button></li>
                       <li class="page-item"><button class="btn btn-outline-primary "  :class="{'disabled': nxt_page}" @click="next">下一頁</button></li>
@@ -153,10 +154,18 @@ let app = new Vue({
             const api_key = 'AIzaSyAnb3NJwQ_b87NUiF02RvtUA_k_KylPjpM'
             const lat = this.location.lat
             const lng = this.location.lng
-            const cors = 'https://cors-anywhere.herokuapp.com/'
-            //this.apiUrl = `${cors}https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
-            this.apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
-            this.axios.get(this.apiUrl).then((response) => {
+            const cors = 'https://cors.bridged.cc/'
+            this.apiUrl = `${cors}https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&rankby=distance&types=food&keyword=${keyword}&language=zh-TW&key=${api_key}`
+            this.axios.get(this.apiUrl,{
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Headers': 'Origin, Methods, Content-Type, Authorization',
+                    'Access-Control-Allow-Credentials': true,
+                    'Origin': '*',
+                    'x-requested-with':'XMLHttpRequest'
+                }
+            }).then((response) => {
                 if(response.data.status === 'OK'){
                     console.log(response.data)
                     this.data = response.data
