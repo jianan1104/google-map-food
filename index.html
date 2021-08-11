@@ -22,7 +22,8 @@
         <script src="https://cdn.jsdelivr.net/npm/vue-axios@3.2.5/dist/vue-axios.es5.min.js"></script>
         <!-- vue-star-rating.js-->
         <script src="https://unpkg.com/vue-star-rating/dist/VueStarRating.umd.min.js"></script>
-
+        <!-- vue-loading -->
+        <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3.4.2/dist/vue-loading.min.js"></script>
 
 </script>
     </head>
@@ -36,6 +37,7 @@
         </nav>
         <!-- Masthead-->
         <div id="app">
+        
         <header class="masthead mb-4">
             <div class="container position-relative">
                 <div class="row justify-content-center">
@@ -66,6 +68,7 @@
         </header>
         <!-- Content-->
             <div class="container" id="content">
+                <loading :active.sync="isLoading" :is-full-page="true"></loading>
                 <div class="row">
                     <div class="col-lg-3 mb-3" v-for="(item, key) in data.results" :key="item.id">
                         <div class="card">
@@ -88,7 +91,7 @@
                           </div>
                     </div>
                 </div>
-                <nav aria-label="Page navigation" v-if="data">
+                <nav aria-label="Page navigation" v-if="done">
                     <ul class="pagination">
                       <li class="page-item"><button class="btn btn-outline-primary mx-3" :class="{'disabled': pre_page}"  @click="previous">上一頁</button></li>
                       <li class="page-item"><button class="btn btn-outline-primary "  :class="{'disabled': nxt_page}" @click="next">下一頁</button></li>
@@ -131,7 +134,9 @@ let app = new Vue({
             pre_tkn: '',
             nxt_tkn: '',
             pre_page: true,
-            nxt_page: true
+            nxt_page: true,
+            done: false,
+            isLoading: false
         }
     },
     methods: {
@@ -170,7 +175,9 @@ let app = new Vue({
                     console.log(response.data)
                     this.data = response.data
                     this.nxt_page = false
+                    this.done = true
                     this.nxt_tkn = response.data.next_page_token
+                    this.isLoading = !this.isLoading
                 }
                 
             })
@@ -196,23 +203,26 @@ let app = new Vue({
             }
         },
         next(){
+            this.isLoading = !this.isLoading
             tkn = this.nxt_tkn
             this.pre_page = false             
             const api = `${this.apiUrl}&pagetoken=${tkn}`
             this.axios.get(api).then((response) => {
                 if(response.data.status === 'OK'){
                     console.log(response.data)
+                    this.old_data = this.data
                     this.data = response.data
-                    this.old_data = Object.assign({}, this.data)
                     this.nxt_tkn = response.data.next_page_token
+                    this.isLoading = !this.isLoading
                 }
                 
             })
         },
         previous(){
-            console.log('123')
-            this.data = {}
-            this.data = Object.assign({}, this.old_data)
+            this.isLoading = !this.isLoading
+            this.$set(this, 'data', this.old_data)
+            this.$forceUpdate()
+            this.isLoading = !this.isLoading
         }
     },
     computed: {
@@ -234,4 +244,5 @@ let app = new Vue({
 
 })
 Vue.component('star-rating', VueStarRating.default);
+Vue.component('loading', VueLoading)
 </script>
